@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Http\Controllers\Controller;
 use App\Models\Author;
 use App\Models\BookAuthor;
+use Exception;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
@@ -13,6 +14,25 @@ class BookController extends Controller
     public function token()
     {
         return csrf_token();
+    }
+
+    public function update(Request $request) 
+    {
+        Book::where('id', $request->id)->update([
+            'admin_id' => $request->admin_id,
+            'isbn' => $request->isbn,
+            'title' => $request->title
+        ]);
+    }
+
+    public function patchUpdate(Request $request) 
+    {
+        $existingBook = Book::where('id', $request->id)->first();
+        Book::where('id', $request->id)->update([
+            'admin_id' => empty($request->admin_id)? $existingBook->admin_id : $request->admin_id,
+            'isbn' => empty($request->isbn)? $existingBook->isbn : $request->isbn,
+            'title' => empty($request->title)? $existingBook->title : $request->title
+        ]);
     }
 
     public function store(Request $request) 
